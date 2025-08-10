@@ -134,7 +134,7 @@ export default function UniversalToolInterface({ config, onProcess, children }: 
       </div>
 
       {/* Ad Slot 1 */}
-      <AdSlot id="tool-top" position="tool-top" size="banner" className="mb-8" />
+      <AdSlot slotId="tool-top" position="tool-top" page="universal-tool" className="mb-8" />
 
       {/* Tool Interface */}
       <Card className="glassmorphism mb-8">
@@ -279,7 +279,10 @@ export default function UniversalToolInterface({ config, onProcess, children }: 
       </Card>
 
       {/* Ad Slot 2 */}
-      <AdSlot id="tool-bottom" position="tool-bottom" size="banner" />
+      <AdSlot slotId="tool-bottom" position="tool-bottom" page="universal-tool" />
+
+      {/* Ad Slot 3 - Side slot for smaller ads */}
+      <AdSlot slotId="tool-side" position="tool-side" page="universal-tool" className="mb-6" />
 
       {/* Tool Information */}
       <Card className="glassmorphism">

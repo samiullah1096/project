@@ -135,50 +135,50 @@ export class MemStorage implements IStorage {
       { name: "Home Footer Top", position: "footer-top", page: "home", isActive: true },
       { name: "Home Footer Bottom", position: "footer-bottom", page: "home", isActive: true },
       
-      // PDF Tools page slots (6 slots)
-      { name: "PDF Tools Header", position: "header-banner", page: "pdf-tools", isActive: true },
-      { name: "PDF Tools Sidebar Top", position: "sidebar-top", page: "pdf-tools", isActive: true },
-      { name: "PDF Tools Sidebar Bottom", position: "sidebar-bottom", page: "pdf-tools", isActive: true },
-      { name: "PDF Tools Grid Top", position: "grid-top", page: "pdf-tools", isActive: true },
-      { name: "PDF Tools Grid Bottom", position: "grid-bottom", page: "pdf-tools", isActive: true },
-      { name: "PDF Tools Footer", position: "footer-banner", page: "pdf-tools", isActive: true },
+      // PDF Tools page slots (6 slots matching frontend positions)
+      { name: "PDF Tools Top Banner", position: "pdf-tools-top", page: "pdf-tools", isActive: true },
+      { name: "PDF Tools Header Secondary", position: "pdf-tools-header-secondary", page: "pdf-tools", isActive: true },
+      { name: "PDF Tools Popular Section", position: "pdf-tools-popular", page: "pdf-tools", isActive: true },
+      { name: "PDF Tools Middle Banner", position: "pdf-tools-middle", page: "pdf-tools", isActive: true },
+      { name: "PDF Tools Grid Section", position: "pdf-tools-grid", page: "pdf-tools", isActive: true },
+      { name: "PDF Tools Bottom Banner", position: "pdf-tools-bottom", page: "pdf-tools", isActive: true },
       
-      // Image Tools page slots (6 slots)
-      { name: "Image Tools Header", position: "header-banner", page: "image-tools", isActive: true },
-      { name: "Image Tools Sidebar Top", position: "sidebar-top", page: "image-tools", isActive: true },
-      { name: "Image Tools Sidebar Bottom", position: "sidebar-bottom", page: "image-tools", isActive: true },
-      { name: "Image Tools Grid Top", position: "grid-top", page: "image-tools", isActive: true },
-      { name: "Image Tools Grid Bottom", position: "grid-bottom", page: "image-tools", isActive: true },
-      { name: "Image Tools Footer", position: "footer-banner", page: "image-tools", isActive: true },
+      // Image Tools page slots (6 slots matching frontend positions)
+      { name: "Image Tools Top Banner", position: "image-tools-top", page: "image-tools", isActive: true },
+      { name: "Image Tools Header Secondary", position: "image-tools-header-secondary", page: "image-tools", isActive: true },
+      { name: "Image Tools Popular Section", position: "image-tools-popular", page: "image-tools", isActive: true },
+      { name: "Image Tools Middle Banner", position: "image-tools-middle", page: "image-tools", isActive: true },
+      { name: "Image Tools Grid Section", position: "image-tools-grid", page: "image-tools", isActive: true },
+      { name: "Image Tools Bottom Banner", position: "image-tools-bottom", page: "image-tools", isActive: true },
       
-      // Audio Tools page slots (6 slots)
-      { name: "Audio Tools Header", position: "header-banner", page: "audio-tools", isActive: true },
-      { name: "Audio Tools Sidebar Top", position: "sidebar-top", page: "audio-tools", isActive: true },
-      { name: "Audio Tools Sidebar Bottom", position: "sidebar-bottom", page: "audio-tools", isActive: true },
-      { name: "Audio Tools Grid Top", position: "grid-top", page: "audio-tools", isActive: true },
-      { name: "Audio Tools Grid Bottom", position: "grid-bottom", page: "audio-tools", isActive: true },
-      { name: "Audio Tools Footer", position: "footer-banner", page: "audio-tools", isActive: true },
+      // Audio Tools page slots (6 slots matching frontend positions)
+      { name: "Audio Tools Top Banner", position: "audio-tools-top", page: "audio-tools", isActive: true },
+      { name: "Audio Tools Header Secondary", position: "audio-tools-header-secondary", page: "audio-tools", isActive: true },
+      { name: "Audio Tools Popular Section", position: "audio-tools-popular", page: "audio-tools", isActive: true },
+      { name: "Audio Tools Middle Banner", position: "audio-tools-middle", page: "audio-tools", isActive: true },
+      { name: "Audio Tools Grid Section", position: "audio-tools-grid", page: "audio-tools", isActive: true },
+      { name: "Audio Tools Bottom Banner", position: "audio-tools-bottom", page: "audio-tools", isActive: true },
       
-      // Text Tools page slots (6 slots)
-      { name: "Text Tools Header", position: "header-banner", page: "text-tools", isActive: true },
-      { name: "Text Tools Sidebar Top", position: "sidebar-top", page: "text-tools", isActive: true },
-      { name: "Text Tools Sidebar Bottom", position: "sidebar-bottom", page: "text-tools", isActive: true },
-      { name: "Text Tools Grid Top", position: "grid-top", page: "text-tools", isActive: true },
-      { name: "Text Tools Grid Bottom", position: "grid-bottom", page: "text-tools", isActive: true },
-      { name: "Text Tools Footer", position: "footer-banner", page: "text-tools", isActive: true },
+      // Text Tools page slots (6 slots matching frontend positions)
+      { name: "Text Tools Top Banner", position: "text-tools-top", page: "text-tools", isActive: true },
+      { name: "Text Tools Header Secondary", position: "text-tools-header-secondary", page: "text-tools", isActive: true },
+      { name: "Text Tools Popular Section", position: "text-tools-popular", page: "text-tools", isActive: true },
+      { name: "Text Tools Middle Banner", position: "text-tools-middle", page: "text-tools", isActive: true },
+      { name: "Text Tools Grid Section", position: "text-tools-grid", page: "text-tools", isActive: true },
+      { name: "Text Tools Bottom Banner", position: "text-tools-bottom", page: "text-tools", isActive: true },
       
-      // Productivity Tools page slots (6 slots)
-      { name: "Productivity Tools Header", position: "header-banner", page: "productivity-tools", isActive: true },
-      { name: "Productivity Tools Sidebar Top", position: "sidebar-top", page: "productivity-tools", isActive: true },
-      { name: "Productivity Tools Sidebar Bottom", position: "sidebar-bottom", page: "productivity-tools", isActive: true },
-      { name: "Productivity Tools Grid Top", position: "grid-top", page: "productivity-tools", isActive: true },
-      { name: "Productivity Tools Grid Bottom", position: "grid-bottom", page: "productivity-tools", isActive: true },
-      { name: "Productivity Tools Footer", position: "footer-banner", page: "productivity-tools", isActive: true },
+      // Productivity Tools page slots (6 slots matching frontend positions)
+      { name: "Productivity Tools Top Banner", position: "productivity-tools-top", page: "productivity-tools", isActive: true },
+      { name: "Productivity Tools Header Secondary", position: "productivity-tools-header-secondary", page: "productivity-tools", isActive: true },
+      { name: "Productivity Tools Popular Section", position: "productivity-tools-popular", page: "productivity-tools", isActive: true },
+      { name: "Productivity Tools Middle Banner", position: "productivity-tools-middle", page: "productivity-tools", isActive: true },
+      { name: "Productivity Tools Grid Section", position: "productivity-tools-grid", page: "productivity-tools", isActive: true },
+      { name: "Productivity Tools Bottom Banner", position: "productivity-tools-bottom", page: "productivity-tools", isActive: true },
       
-      // Individual tool page slots (2-3 slots per tool)
-      { name: "Tool Page Top Banner", position: "tool-top", page: "tool-page", isActive: true },
-      { name: "Tool Page Sidebar", position: "tool-sidebar", page: "tool-page", isActive: true },
-      { name: "Tool Page Bottom Banner", position: "tool-bottom", page: "tool-page", isActive: true },
+      // Universal Tool Interface slots (3 slots matching frontend positions)
+      { name: "Tool Top Banner", position: "tool-top", page: "universal-tool", isActive: true },
+      { name: "Tool Bottom Banner", position: "tool-bottom", page: "universal-tool", isActive: true },
+      { name: "Tool Side Banner", position: "tool-side", page: "universal-tool", isActive: true },
     ];
 
     for (const slot of defaultSlots) {
@@ -236,12 +236,12 @@ export class MemStorage implements IStorage {
         
         if (!customProvider) return;
 
-        // Create sample campaigns
-        const headerCampaign = await this.createAdCampaign({
-          name: "Header Banner Campaign",
+        // Create comprehensive sample campaigns for all ad slot types
+        const topBannerCampaign = await this.createAdCampaign({
+          name: "Top Banner Campaign",
           providerId: customProvider.id,
           adType: "banner",
-          adCode: `<div style="width: 100%; height: 90px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-family: Arial, sans-serif; margin: 10px 0;">
+          adCode: `<div style="width: 100%; height: 90px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-family: Arial, sans-serif; margin: 10px 0; box-shadow: 0 4px 6px rgba(0,0,0,0.1);">
             <div style="text-align: center;">
               <div style="font-size: 18px; font-weight: bold; margin-bottom: 4px;">🚀 Premium Tools</div>
               <div style="font-size: 12px;">Unlock advanced features with Pro</div>
@@ -252,8 +252,38 @@ export class MemStorage implements IStorage {
           dimensions: "728x90",
         });
 
-        const featureCampaign = await this.createAdCampaign({
-          name: "Feature Banner Campaign",
+        const headerSecondaryCampaign = await this.createAdCampaign({
+          name: "Header Secondary Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 70px; background: linear-gradient(45deg, #4CAF50, #45a049); display: flex; align-items: center; justify-content: center; border-radius: 6px; color: white; font-family: Arial, sans-serif; margin: 8px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;">💡 Pro Tip</div>
+              <div style="font-size: 11px;">Save time with batch processing</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/batch-processing",
+          dimensions: "600x70",
+        });
+
+        const popularSectionCampaign = await this.createAdCampaign({
+          name: "Popular Section Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 80px; background: linear-gradient(135deg, #ff9a9e 0%, #fecfef 50%, #fecfef 100%); display: flex; align-items: center; justify-content: center; border-radius: 8px; color: #333; font-family: Arial, sans-serif; margin: 8px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 17px; font-weight: bold; margin-bottom: 4px;">⭐ Most Popular Tools</div>
+              <div style="font-size: 11px;">Join millions of users worldwide</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/popular",
+          dimensions: "700x80",
+        });
+
+        const middleBannerCampaign = await this.createAdCampaign({
+          name: "Middle Banner Campaign",
           providerId: customProvider.id,
           adType: "banner",
           adCode: `<div style="width: 100%; height: 100px; background: linear-gradient(45deg, #ff6b6b, #ffa726, #66bb6a, #42a5f5); background-size: 400% 400%; animation: gradientShift 8s ease infinite; display: flex; align-items: center; justify-content: center; border-radius: 12px; color: white; font-family: Arial, sans-serif; margin: 10px 0;">
@@ -274,13 +304,28 @@ export class MemStorage implements IStorage {
           dimensions: "800x100",
         });
 
-        const footerCampaign = await this.createAdCampaign({
-          name: "Footer Banner Campaign",
+        const gridSectionCampaign = await this.createAdCampaign({
+          name: "Grid Section Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 85px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius: 10px; color: white; font-family: Arial, sans-serif; margin: 10px 0; border: 2px solid rgba(255,255,255,0.1);">
+            <div style="text-align: center;">
+              <div style="font-size: 17px; font-weight: bold; margin-bottom: 4px;">🛠️ All Tools Available</div>
+              <div style="font-size: 12px;">Professional-grade online tools</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/all-tools",
+          dimensions: "750x85",
+        });
+
+        const bottomBannerCampaign = await this.createAdCampaign({
+          name: "Bottom Banner Campaign",
           providerId: customProvider.id,
           adType: "banner",
           adCode: `<div style="width: 100%; height: 80px; background: rgba(255,255,255,0.05); border: 1px solid rgba(255,255,255,0.1); border-radius: 8px; display: flex; align-items: center; justify-content: center; color: #888; font-family: Arial, sans-serif; margin: 10px 0;">
             <div style="text-align: center;">
-              <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">Advertise Here</div>
+              <div style="font-size: 14px; font-weight: 600; margin-bottom: 4px;">📈 Advertise Here</div>
               <div style="font-size: 12px;">Reach thousands of users daily</div>
             </div>
           </div>`,
@@ -289,8 +334,161 @@ export class MemStorage implements IStorage {
           dimensions: "728x80",
         });
 
-        // Get slots and assign campaigns
+        const toolTopCampaign = await this.createAdCampaign({
+          name: "Tool Top Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 75px; background: linear-gradient(135deg, #11998e 0%, #38ef7d 100%); display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-family: Arial, sans-serif; margin: 8px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 16px; font-weight: bold; margin-bottom: 3px;">⚡ Quick & Secure</div>
+              <div style="font-size: 11px;">Your files are processed safely</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/security",
+          dimensions: "650x75",
+        });
+
+        const toolBottomCampaign = await this.createAdCampaign({
+          name: "Tool Bottom Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 85px; background: linear-gradient(135deg, #667eea 0%, #764ba2 100%); display: flex; align-items: center; justify-content: center; border-radius: 8px; color: white; font-family: Arial, sans-serif; margin: 10px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 17px; font-weight: bold; margin-bottom: 4px;">💼 Need More Tools?</div>
+              <div style="font-size: 12px;">Explore our complete suite</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/explore",
+          dimensions: "700x85",
+        });
+
+        const toolSideCampaign = await this.createAdCampaign({
+          name: "Tool Side Campaign",
+          providerId: customProvider.id,
+          adType: "banner",
+          adCode: `<div style="width: 100%; height: 60px; background: linear-gradient(45deg, #FA8072, #FFA07A); display: flex; align-items: center; justify-content: center; border-radius: 6px; color: white; font-family: Arial, sans-serif; margin: 6px 0;">
+            <div style="text-align: center;">
+              <div style="font-size: 14px; font-weight: bold; margin-bottom: 2px;">📱 Mobile App</div>
+              <div style="font-size: 10px;">Use tools on the go</div>
+            </div>
+          </div>`,
+          isActive: true,
+          clickUrl: "https://toolsuite.com/mobile",
+          dimensions: "500x60",
+        });
+
+        // Get all slots and create comprehensive assignments
         const slots = Array.from(this.adSlots.values());
+        
+        // Assign campaigns to all top banner slots (all category pages)
+        const topBannerSlots = slots.filter(s => s.position.includes('-top'));
+        for (const slot of topBannerSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: topBannerCampaign.id,
+            assignedBy: "system",
+            priority: 10,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to header secondary slots
+        const headerSecondarySlots = slots.filter(s => s.position.includes('-header-secondary'));
+        for (const slot of headerSecondarySlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: headerSecondaryCampaign.id,
+            assignedBy: "system",
+            priority: 9,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to popular section slots
+        const popularSectionSlots = slots.filter(s => s.position.includes('-popular'));
+        for (const slot of popularSectionSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: popularSectionCampaign.id,
+            assignedBy: "system",
+            priority: 8,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to middle banner slots
+        const middleBannerSlots = slots.filter(s => s.position.includes('-middle'));
+        for (const slot of middleBannerSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: middleBannerCampaign.id,
+            assignedBy: "system",
+            priority: 7,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to grid section slots
+        const gridSectionSlots = slots.filter(s => s.position.includes('-grid'));
+        for (const slot of gridSectionSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: gridSectionCampaign.id,
+            assignedBy: "system",
+            priority: 6,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to bottom banner slots
+        const bottomBannerSlots = slots.filter(s => s.position.includes('-bottom'));
+        for (const slot of bottomBannerSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: bottomBannerCampaign.id,
+            assignedBy: "system",
+            priority: 5,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to tool-specific slots
+        const toolTopSlots = slots.filter(s => s.position === 'tool-top');
+        for (const slot of toolTopSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: toolTopCampaign.id,
+            assignedBy: "system",
+            priority: 8,
+            isActive: true,
+          });
+        }
+        
+        const toolBottomSlots = slots.filter(s => s.position === 'tool-bottom');
+        for (const slot of toolBottomSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: toolBottomCampaign.id,
+            assignedBy: "system",
+            priority: 7,
+            isActive: true,
+          });
+        }
+        
+        const toolSideSlots = slots.filter(s => s.position === 'tool-side');
+        for (const slot of toolSideSlots) {
+          await this.createSlotAssignment({
+            slotId: slot.id,
+            campaignId: toolSideCampaign.id,
+            assignedBy: "system",
+            priority: 6,
+            isActive: true,
+          });
+        }
+        
+        // Assign campaigns to home page slots
         const heroBannerSlot = slots.find(s => s.position === 'hero-banner' && s.page === 'home');
         const featureBannerSlot = slots.find(s => s.position === 'feature-banner' && s.page === 'home');
         const footerTopSlot = slots.find(s => s.position === 'footer-top' && s.page === 'home');
@@ -298,7 +496,7 @@ export class MemStorage implements IStorage {
         if (heroBannerSlot) {
           await this.createSlotAssignment({
             slotId: heroBannerSlot.id,
-            campaignId: headerCampaign.id,
+            campaignId: topBannerCampaign.id,
             assignedBy: "system",
             priority: 10,
             isActive: true,
@@ -308,7 +506,7 @@ export class MemStorage implements IStorage {
         if (featureBannerSlot) {
           await this.createSlotAssignment({
             slotId: featureBannerSlot.id,
-            campaignId: featureCampaign.id,
+            campaignId: middleBannerCampaign.id,
             assignedBy: "system",
             priority: 9,
             isActive: true,
@@ -318,7 +516,7 @@ export class MemStorage implements IStorage {
         if (footerTopSlot) {
           await this.createSlotAssignment({
             slotId: footerTopSlot.id,
-            campaignId: footerCampaign.id,
+            campaignId: bottomBannerCampaign.id,
             assignedBy: "system",
             priority: 8,
             isActive: true,

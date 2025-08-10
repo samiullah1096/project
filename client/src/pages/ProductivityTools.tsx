@@ -134,8 +134,13 @@ export default function ProductivityTools() {
         </p>
       </div>
 
-      {/* Ad Slot 1 */}
-      <AdSlot page="productivity-tools" position="productivity-tools-top" size="banner" />
+      {/* Ad Slot 1 - Top Banner */}
+      <AdSlot slotId="productivity-tools-top" position="productivity-tools-top" page="productivity-tools" />
+
+      {/* Ad Slot 2 - Header Secondary */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <AdSlot slotId="productivity-tools-header-secondary" position="productivity-tools-header-secondary" page="productivity-tools" />
+      </div>
 
       {/* Popular Tools Section */}
       <div className="max-w-7xl mx-auto mb-12">
@@ -168,8 +173,13 @@ export default function ProductivityTools() {
         </div>
       </div>
 
-      {/* Ad Slot 2 */}
-      <AdSlot page="productivity-tools" position="productivity-tools-middle" size="banner" />
+      {/* Ad Slot 3 - Popular Tools Section */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <AdSlot slotId="productivity-tools-popular" position="productivity-tools-popular" page="productivity-tools" />
+      </div>
+
+      {/* Ad Slot 4 - Middle Banner */}
+      <AdSlot slotId="productivity-tools-middle" position="productivity-tools-middle" page="productivity-tools" />
 
       {/* All Productivity Tools */}
       <div className="max-w-7xl mx-auto">
@@ -194,8 +204,13 @@ export default function ProductivityTools() {
         </div>
       </div>
 
-      {/* Ad Slot 3 */}
-      <AdSlot page="productivity-tools" position="productivity-tools-bottom" size="banner" className="mt-12" />
+      {/* Ad Slot 5 - Tools Grid Section */}
+      <div className="max-w-7xl mx-auto mt-8 mb-8">
+        <AdSlot slotId="productivity-tools-grid" position="productivity-tools-grid" page="productivity-tools" />
+      </div>
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="productivity-tools-bottom" position="productivity-tools-bottom" page="productivity-tools" className="mt-12" />
     </div>
   );
 }

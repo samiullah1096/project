@@ -134,8 +134,13 @@ export default function TextTools() {
         </p>
       </div>
 
-      {/* Ad Slot 1 */}
-      <AdSlot position="text-tools-top" page="text-tools" size="banner" />
+      {/* Ad Slot 1 - Top Banner */}
+      <AdSlot slotId="text-tools-top" position="text-tools-top" page="text-tools" />
+
+      {/* Ad Slot 2 - Header Secondary */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <AdSlot slotId="text-tools-header-secondary" position="text-tools-header-secondary" page="text-tools" />
+      </div>
 
       {/* Popular Tools Section */}
       <div className="max-w-7xl mx-auto mb-12">
@@ -168,8 +173,13 @@ export default function TextTools() {
         </div>
       </div>
 
-      {/* Ad Slot 2 */}
-      <AdSlot position="text-tools-middle" page="text-tools" size="banner" />
+      {/* Ad Slot 3 - Popular Tools Section */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <AdSlot slotId="text-tools-popular" position="text-tools-popular" page="text-tools" />
+      </div>
+
+      {/* Ad Slot 4 - Middle Banner */}
+      <AdSlot slotId="text-tools-middle" position="text-tools-middle" page="text-tools" />
 
       {/* All Text Tools */}
       <div className="max-w-7xl mx-auto">
@@ -194,8 +204,13 @@ export default function TextTools() {
         </div>
       </div>
 
-      {/* Ad Slot 3 */}
-      <AdSlot position="text-tools-bottom" page="text-tools" size="banner" className="mt-12" />
+      {/* Ad Slot 5 - Tools Grid Section */}
+      <div className="max-w-7xl mx-auto mt-8 mb-8">
+        <AdSlot slotId="text-tools-grid" position="text-tools-grid" page="text-tools" />
+      </div>
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="text-tools-bottom" position="text-tools-bottom" page="text-tools" className="mt-12" />
     </div>
   );
 }

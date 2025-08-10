@@ -118,8 +118,13 @@ export default function AudioTools() {
         </p>
       </div>
 
-      {/* Ad Slot 1 */}
-      <AdSlot position="audio-tools-top" page="audio-tools" size="banner" />
+      {/* Ad Slot 1 - Top Banner */}
+      <AdSlot slotId="audio-tools-top" position="audio-tools-top" page="audio-tools" />
+
+      {/* Ad Slot 2 - Header Secondary */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <AdSlot slotId="audio-tools-header-secondary" position="audio-tools-header-secondary" page="audio-tools" />
+      </div>
 
       {/* Popular Tools Section */}
       <div className="max-w-7xl mx-auto mb-12">
@@ -152,8 +157,13 @@ export default function AudioTools() {
         </div>
       </div>
 
-      {/* Ad Slot 2 */}
-      <AdSlot position="audio-tools-middle" page="audio-tools" size="banner" />
+      {/* Ad Slot 3 - Popular Tools Section */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <AdSlot slotId="audio-tools-popular" position="audio-tools-popular" page="audio-tools" />
+      </div>
+
+      {/* Ad Slot 4 - Middle Banner */}
+      <AdSlot slotId="audio-tools-middle" position="audio-tools-middle" page="audio-tools" />
 
       {/* All Audio Tools */}
       <div className="max-w-7xl mx-auto">
@@ -178,8 +188,13 @@ export default function AudioTools() {
         </div>
       </div>
 
-      {/* Ad Slot 3 */}
-      <AdSlot position="audio-tools-bottom" page="audio-tools" size="banner" className="mt-12" />
+      {/* Ad Slot 5 - Tools Grid Section */}
+      <div className="max-w-7xl mx-auto mt-8 mb-8">
+        <AdSlot slotId="audio-tools-grid" position="audio-tools-grid" page="audio-tools" />
+      </div>
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="audio-tools-bottom" position="audio-tools-bottom" page="audio-tools" className="mt-12" />
     </div>
   );
 }

@@ -134,8 +134,13 @@ export default function ImageTools() {
         </p>
       </div>
 
-      {/* Ad Slot 1 */}
-      <AdSlot id="image-tools-top" position="image-tools-top" size="banner" />
+      {/* Ad Slot 1 - Top Banner */}
+      <AdSlot slotId="image-tools-top" position="image-tools-top" page="image-tools" />
+
+      {/* Ad Slot 2 - Header Secondary */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <AdSlot slotId="image-tools-header-secondary" position="image-tools-header-secondary" page="image-tools" />
+      </div>
 
       {/* Popular Tools Section */}
       <div className="max-w-7xl mx-auto mb-12">
@@ -168,8 +173,13 @@ export default function ImageTools() {
         </div>
       </div>
 
-      {/* Ad Slot 2 */}
-      <AdSlot id="image-tools-middle" position="image-tools-middle" size="banner" />
+      {/* Ad Slot 3 - Popular Tools Section */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <AdSlot slotId="image-tools-popular" position="image-tools-popular" page="image-tools" />
+      </div>
+
+      {/* Ad Slot 4 - Middle Banner */}
+      <AdSlot slotId="image-tools-middle" position="image-tools-middle" page="image-tools" />
 
       {/* All Image Tools */}
       <div className="max-w-7xl mx-auto">
@@ -194,8 +204,13 @@ export default function ImageTools() {
         </div>
       </div>
 
-      {/* Ad Slot 3 */}
-      <AdSlot id="image-tools-bottom" position="image-tools-bottom" size="banner" className="mt-12" />
+      {/* Ad Slot 5 - Tools Grid Section */}
+      <div className="max-w-7xl mx-auto mt-8 mb-8">
+        <AdSlot slotId="image-tools-grid" position="image-tools-grid" page="image-tools" />
+      </div>
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="image-tools-bottom" position="image-tools-bottom" page="image-tools" className="mt-12" />
     </div>
   );
 }

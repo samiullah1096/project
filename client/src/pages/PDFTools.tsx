@@ -166,8 +166,13 @@ export default function PDFTools() {
         </p>
       </div>
 
-      {/* Ad Slot 1 */}
-      <AdSlot id="pdf-tools-top" position="pdf-tools-top" size="banner" />
+      {/* Ad Slot 1 - Top Banner */}
+      <AdSlot slotId="pdf-tools-top" position="pdf-tools-top" page="pdf-tools" />
+
+      {/* Ad Slot 2 - Header Secondary */}
+      <div className="max-w-7xl mx-auto mb-6">
+        <AdSlot slotId="pdf-tools-header-secondary" position="pdf-tools-header-secondary" page="pdf-tools" />
+      </div>
 
       {/* Popular Tools Section */}
       <div className="max-w-7xl mx-auto mb-12">
@@ -200,8 +205,13 @@ export default function PDFTools() {
         </div>
       </div>
 
-      {/* Ad Slot 2 */}
-      <AdSlot id="pdf-tools-middle" position="pdf-tools-middle" size="banner" />
+      {/* Ad Slot 3 - Popular Tools Section */}
+      <div className="max-w-7xl mx-auto mb-8">
+        <AdSlot slotId="pdf-tools-popular" position="pdf-tools-popular" page="pdf-tools" />
+      </div>
+
+      {/* Ad Slot 4 - Middle Banner */}
+      <AdSlot slotId="pdf-tools-middle" position="pdf-tools-middle" page="pdf-tools" />
 
       {/* All PDF Tools */}
       <div className="max-w-7xl mx-auto">
@@ -226,8 +236,13 @@ export default function PDFTools() {
         </div>
       </div>
 
-      {/* Ad Slot 3 */}
-      <AdSlot id="pdf-tools-bottom" position="pdf-tools-bottom" size="banner" className="mt-12" />
+      {/* Ad Slot 5 - Tools Grid Section */}
+      <div className="max-w-7xl mx-auto mt-8 mb-8">
+        <AdSlot slotId="pdf-tools-grid" position="pdf-tools-grid" page="pdf-tools" />
+      </div>
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="pdf-tools-bottom" position="pdf-tools-bottom" page="pdf-tools" className="mt-12" />
 
       {/* SEO Content */}
       <div className="max-w-4xl mx-auto mt-16 px-4">
