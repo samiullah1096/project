@@ -14,7 +14,7 @@ export default function Hero() {
   // Real-time search as user types
   useEffect(() => {
     if (searchQuery.trim().length > 2) {
-      const results = searchTools(searchQuery, 8);
+      const results = searchTools(searchQuery).slice(0, 8);
       setSearchResults(results);
       setShowResults(true);
     } else {
@@ -26,7 +26,7 @@ export default function Hero() {
   const handleSearch = (e: React.FormEvent) => {
     e.preventDefault();
     if (searchQuery.trim().length > 2) {
-      const results = searchTools(searchQuery, 10);
+      const results = searchTools(searchQuery).slice(0, 10);
       setSearchResults(results);
       setShowResults(true);
     }
