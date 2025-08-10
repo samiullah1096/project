@@ -7,8 +7,12 @@ import {
   type AdSlotAssignment, type InsertAdSlotAssignment,
   type AdAnalytics, type InsertAdAnalytics,
   type AdView, type InsertAdView,
-  type Analytics 
+  type Analytics,
+  users, toolUsage, adSlots, adProviders, adCampaigns, adSlotAssignments, adAnalytics, adViews
 } from "@shared/schema";
+import { drizzle } from "drizzle-orm/postgres-js";
+import postgres from "postgres";
+import { eq, and, desc, sql } from "drizzle-orm";
 import { randomUUID } from "crypto";
 import bcrypt from "bcrypt";
 
@@ -79,54 +83,71 @@ export interface IStorage {
   generateSitemap(): Promise<string>;
 }
 
-export class MemStorage implements IStorage {
-  private users: Map<string, User>;
-  private toolUsages: Map<string, ToolUsage>;
-  private adSlots: Map<string, AdSlot>;
-  private adProviders: Map<string, AdProvider>;
-  private adCampaigns: Map<string, AdCampaign>;
-  private adSlotAssignments: Map<string, AdSlotAssignment>;
-  private adAnalytics: Map<string, AdAnalytics>;
-  private adViews: Map<string, AdView>;
+export class SupabaseStorage implements IStorage {
+  private db: ReturnType<typeof drizzle>;
 
   constructor() {
-    this.users = new Map();
-    this.toolUsages = new Map();
-    this.adSlots = new Map();
-    this.adProviders = new Map();
-    this.adCampaigns = new Map();
-    this.adSlotAssignments = new Map();
-    this.adAnalytics = new Map();
-    this.adViews = new Map();
+    const connectionString = process.env.DATABASE_URL;
+    if (!connectionString) {
+      throw new Error("DATABASE_URL is required for Supabase connection");
+    }
     
-    // Initialize with admin user
-    this.initializeAdminUser();
+    const client = postgres(connectionString);
+    this.db = drizzle(client);
     
-    // Initialize default ad slots and providers
-    this.initializeDefaultAdSlots();
-    this.initializeDefaultAdProviders();
-    this.initializeSampleAdCampaigns();
+    // Initialize sample data
+    this.initializeSupabaseData();
+  }
+
+  private async initializeSupabaseData() {
+    try {
+      // Initialize admin user
+      await this.initializeAdminUser();
+      
+      // Initialize ad slots and providers  
+      await this.initializeDefaultAdSlots();
+      await this.initializeDefaultAdProviders();
+      
+      // Initialize sample ad campaigns with delay
+      setTimeout(() => {
+        this.initializeSampleAdCampaigns();
+      }, 2000);
+      
+      console.log("Supabase ad management system initialized successfully!");
+    } catch (error) {
+      console.error("Error initializing Supabase data:", error);
+    }
   }
 
   private async initializeAdminUser() {
-    const adminId = randomUUID();
-    const hashedPassword = await bcrypt.hash("admin123", 10);
-    
-    const adminUser: User = {
-      id: adminId,
-      username: "admin",
-      email: "admin@toolsuitepro.com",
-      password: hashedPassword,
-      role: "admin",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
-    
-    this.users.set(adminId, adminUser);
+    try {
+      // Check if admin user already exists
+      const existingAdmin = await this.db.select().from(users).where(eq(users.email, "admin@toolsuitepro.com")).limit(1);
+      
+      if (existingAdmin.length === 0) {
+        const hashedPassword = await bcrypt.hash("admin123", 10);
+        
+        await this.db.insert(users).values({
+          username: "admin",
+          email: "admin@toolsuitepro.com", 
+          password: hashedPassword,
+          role: "admin"
+        });
+        
+        console.log("Admin user created successfully");
+      }
+    } catch (error) {
+      console.error("Error creating admin user:", error);
+    }
   }
 
   private async initializeDefaultAdSlots() {
-    const defaultSlots: InsertAdSlot[] = [
+    try {
+      // Check if slots already exist
+      const existingSlots = await this.db.select().from(adSlots).limit(1);
+      if (existingSlots.length > 0) return;
+      
+      const defaultSlots: InsertAdSlot[] = [
       // Home page slots (6 slots)
       { name: "Home Hero Banner", position: "hero-banner", page: "home", isActive: true },
       { name: "Home Sidebar Top", position: "sidebar-top", page: "home", isActive: true },
@@ -181,13 +202,20 @@ export class MemStorage implements IStorage {
       { name: "Tool Side Banner", position: "tool-side", page: "universal-tool", isActive: true },
     ];
 
-    for (const slot of defaultSlots) {
-      await this.createAdSlot(slot);
+      await this.db.insert(adSlots).values(defaultSlots);
+      console.log("Default ad slots created successfully");
+    } catch (error) {
+      console.error("Error creating default ad slots:", error);
     }
   }
 
   private async initializeDefaultAdProviders() {
-    const defaultProviders: InsertAdProvider[] = [
+    try {
+      // Check if providers already exist
+      const existingProviders = await this.db.select().from(adProviders).limit(1);
+      if (existingProviders.length > 0) return;
+      
+      const defaultProviders: InsertAdProvider[] = [
       {
         name: "Google AdSense",
         type: "adsense",
@@ -221,8 +249,10 @@ export class MemStorage implements IStorage {
       }
     ];
 
-    for (const provider of defaultProviders) {
-      await this.createAdProvider(provider);
+      await this.db.insert(adProviders).values(defaultProviders);
+      console.log("Default ad providers created successfully");
+    } catch (error) {
+      console.error("Error creating default ad providers:", error);
     }
   }
 
@@ -230,14 +260,18 @@ export class MemStorage implements IStorage {
     // Create some sample campaigns after providers exist
     setTimeout(async () => {
       try {
-        const providers = Array.from(this.adProviders.values());
+        // Check if campaigns already exist
+        const existingCampaigns = await this.db.select().from(adCampaigns).limit(1);
+        if (existingCampaigns.length > 0) return;
+        
+        const providers = await this.db.select().from(adProviders);
         const customProvider = providers.find(p => p.type === 'custom');
         const adsenseProvider = providers.find(p => p.type === 'adsense');
         
         if (!customProvider) return;
 
         // Create comprehensive sample campaigns for all ad slot types
-        const topBannerCampaign = await this.createAdCampaign({
+        const topBannerCampaign = await this.db.insert(adCampaigns).values({
           name: "Top Banner Campaign",
           providerId: customProvider.id,
           adType: "banner",
@@ -250,9 +284,9 @@ export class MemStorage implements IStorage {
           isActive: true,
           clickUrl: "https://toolsuite.com/pro",
           dimensions: "728x90",
-        });
+        }).returning();
 
-        const headerSecondaryCampaign = await this.createAdCampaign({
+        const headerSecondaryCampaign = await this.db.insert(adCampaigns).values({
           name: "Header Secondary Campaign",
           providerId: customProvider.id,
           adType: "banner",
@@ -265,7 +299,7 @@ export class MemStorage implements IStorage {
           isActive: true,
           clickUrl: "https://toolsuite.com/batch-processing",
           dimensions: "600x70",
-        });
+        }).returning();
 
         const popularSectionCampaign = await this.createAdCampaign({
           name: "Popular Section Campaign",
@@ -532,46 +566,39 @@ export class MemStorage implements IStorage {
 
   // User management methods
   async getUser(id: string): Promise<User | undefined> {
-    return this.users.get(id);
+    const result = await this.db.select().from(users).where(eq(users.id, id)).limit(1);
+    return result[0];
   }
 
   async getUserByEmail(email: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.email === email);
+    const result = await this.db.select().from(users).where(eq(users.email, email)).limit(1);
+    return result[0];
   }
 
   async getUserByUsername(username: string): Promise<User | undefined> {
-    return Array.from(this.users.values()).find(user => user.username === username);
+    const result = await this.db.select().from(users).where(eq(users.username, username)).limit(1);
+    return result[0];
   }
 
   async createUser(insertUser: InsertUser): Promise<User> {
-    const id = randomUUID();
     const hashedPassword = await bcrypt.hash(insertUser.password, 10);
     
-    const user: User = {
-      id,
+    const result = await this.db.insert(users).values({
       ...insertUser,
       password: hashedPassword,
-      role: insertUser.role || "user",
-      createdAt: new Date(),
-      updatedAt: new Date(),
-    };
+      role: insertUser.role || "user"
+    }).returning();
     
-    this.users.set(id, user);
-    return user;
+    return result[0];
   }
 
   async updateUser(id: string, updates: Partial<User>): Promise<User | undefined> {
-    const user = this.users.get(id);
-    if (!user) return undefined;
-
-    const updatedUser: User = {
-      ...user,
-      ...updates,
-      updatedAt: new Date(),
-    };
-
-    this.users.set(id, updatedUser);
-    return updatedUser;
+    const result = await this.db.update(users)
+      .set({ ...updates, updatedAt: new Date() })
+      .where(eq(users.id, id))
+      .returning();
+    
+    return result[0];
   }
 
   async authenticateUser(email: string, password: string): Promise<User | undefined> {
@@ -584,19 +611,8 @@ export class MemStorage implements IStorage {
 
   // Tool usage tracking methods
   async createToolUsage(usage: InsertToolUsage): Promise<ToolUsage> {
-    const id = randomUUID();
-    const toolUsage: ToolUsage = {
-      id,
-      ...usage,
-      userId: usage.userId || null,
-      sessionId: usage.sessionId || null,
-      processingTime: usage.processingTime || null,
-      fileSize: usage.fileSize || null,
-      timestamp: new Date(),
-    };
-
-    this.toolUsages.set(id, toolUsage);
-    return toolUsage;
+    const result = await this.db.insert(toolUsage).values(usage).returning();
+    return result[0];
   }
 
   async getToolUsage(filters?: { 
@@ -605,67 +621,58 @@ export class MemStorage implements IStorage {
     dateFrom?: Date; 
     dateTo?: Date; 
   }): Promise<ToolUsage[]> {
-    let usages = Array.from(this.toolUsages.values());
-
+    let query = this.db.select().from(toolUsage);
+    
+    // Apply filters would require more complex where conditions
+    // For now, return all and filter in memory for compatibility
+    const allUsages = await query;
+    
+    let filtered = allUsages;
     if (filters) {
       if (filters.toolName) {
-        usages = usages.filter(usage => usage.toolName === filters.toolName);
+        filtered = filtered.filter(u => u.toolName === filters.toolName);
       }
       if (filters.category) {
-        usages = usages.filter(usage => usage.category === filters.category);
+        filtered = filtered.filter(u => u.category === filters.category);
       }
       if (filters.dateFrom) {
-        usages = usages.filter(usage => usage.timestamp >= filters.dateFrom!);
+        filtered = filtered.filter(u => u.timestamp >= filters.dateFrom!);
       }
       if (filters.dateTo) {
-        usages = usages.filter(usage => usage.timestamp <= filters.dateTo!);
+        filtered = filtered.filter(u => u.timestamp <= filters.dateTo!);
       }
     }
 
-    return usages.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
+    return filtered.sort((a, b) => b.timestamp.getTime() - a.timestamp.getTime());
   }
 
   // Ad slot management methods
   async getAdSlots(): Promise<AdSlot[]> {
-    return Array.from(this.adSlots.values());
+    return await this.db.select().from(adSlots);
   }
 
   async getActiveAdSlots(page: string): Promise<AdSlot[]> {
-    return Array.from(this.adSlots.values())
-      .filter(slot => slot.page === page && slot.isActive);
+    return await this.db.select().from(adSlots)
+      .where(and(eq(adSlots.page, page), eq(adSlots.isActive, true)));
   }
 
   async createAdSlot(adSlot: InsertAdSlot): Promise<AdSlot> {
-    const id = randomUUID();
-    const newAdSlot: AdSlot = {
-      id,
-      ...adSlot,
-      isActive: adSlot.isActive ?? true,
-      adProvider: adSlot.adProvider || null,
-      adCode: adSlot.adCode || null,
-      settings: adSlot.settings || null,
-      createdAt: new Date(),
-    };
-
-    this.adSlots.set(id, newAdSlot);
-    return newAdSlot;
+    const result = await this.db.insert(adSlots).values(adSlot).returning();
+    return result[0];
   }
 
   async updateAdSlot(id: string, updates: Partial<AdSlot>): Promise<AdSlot | undefined> {
-    const adSlot = this.adSlots.get(id);
-    if (!adSlot) return undefined;
-
-    const updatedAdSlot: AdSlot = {
-      ...adSlot,
-      ...updates,
-    };
-
-    this.adSlots.set(id, updatedAdSlot);
-    return updatedAdSlot;
+    const result = await this.db.update(adSlots)
+      .set(updates)
+      .where(eq(adSlots.id, id))
+      .returning();
+    
+    return result[0];
   }
 
   async deleteAdSlot(id: string): Promise<boolean> {
-    return this.adSlots.delete(id);
+    const result = await this.db.delete(adSlots).where(eq(adSlots.id, id));
+    return result.rowCount > 0;
   }
 
   // Ad provider methods
@@ -1059,4 +1066,4 @@ ${pages.map(page => `  <url>
   }
 }
 
-export const storage = new MemStorage();
+export const storage = new SupabaseStorage();

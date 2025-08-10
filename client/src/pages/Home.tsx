@@ -41,6 +41,15 @@ export default function Home() {
       {/* Ad Slot 3 - Footer Top */}
       <AdSlot slotId="footer-top" position="footer-top" page="home" />
 
+      {/* Ad Slot 4 - Sidebar Top */}
+      <AdSlot slotId="sidebar-top" position="sidebar-top" page="home" />
+
+      {/* Ad Slot 5 - Content Middle */}
+      <AdSlot slotId="content-middle" position="content-middle" page="home" />
+
+      {/* Ad Slot 6 - Bottom Banner */}
+      <AdSlot slotId="bottom-banner" position="bottom-banner" page="home" />
+
       {/* CTA Section */}
       <section className="py-16 px-4 bg-gradient-to-r from-primary/10 to-accent/10 relative overflow-hidden">
         <div className="absolute inset-0 gradient-bg opacity-5"></div>
