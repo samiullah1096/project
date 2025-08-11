@@ -24,6 +24,7 @@ import {
   useSlotAssignments, useCreateSlotAssignment, useUpdateSlotAssignment, useDeleteSlotAssignment,
   useAdAnalytics
 } from '@/hooks/useAdManagement';
+import { adProviderConfigs, getProviderConfig } from '@/lib/adProviderConfigs';
 import type { InsertAdProvider, InsertAdCampaign, InsertAdSlot, InsertAdSlotAssignment } from '@shared/schema';
 
 // Form schemas
@@ -31,7 +32,7 @@ const adProviderSchema = z.object({
   name: z.string().min(1, 'Provider name is required'),
   type: z.enum(['adsense', 'medianet', 'amazon', 'propellerads', 'bidvertiser', 'chitika', 'infolinks', 'yllix', 'exoclick', 'adnow', 'revenuehits', 'popads', 'adsterra', 'trafficstars', 'ero-advertising', 'plugrush', 'juicyads', 'clickadilla', 'hilltopads', 'adcash', 'custom']),
   isActive: z.boolean().default(true),
-  credentials: z.string().optional().default(''),
+  credentials: z.record(z.string()).optional().default({}),
   settings: z.any().optional(),
 });
 
@@ -65,6 +66,8 @@ export default function AdminDashboard() {
   const { toast } = useToast();
   const { logout, user } = useAuth();
   const [activeTab, setActiveTab] = useState('providers');
+  const [selectedProviderType, setSelectedProviderType] = useState<string>('');
+  const [providerCredentials, setProviderCredentials] = useState<Record<string, string>>({});
 
   const handleLogout = () => {
     logout();
@@ -113,12 +116,27 @@ export default function AdminDashboard() {
     defaultValues: { priority: 1, isActive: true, assignedBy: 'admin' },
   });
 
+  // Handle provider type change to show dynamic credentials form
+  const handleProviderTypeChange = (providerType: string) => {
+    setSelectedProviderType(providerType);
+    setProviderCredentials({});
+    providerForm.setValue('type', providerType as any);
+    providerForm.setValue('name', adProviderConfigs[providerType]?.name || '');
+  };
+
   // Handlers
   const handleCreateProvider = async (data: InsertAdProvider) => {
     try {
-      await createProvider.mutateAsync(data);
+      // Combine form data with dynamic credentials
+      const providerData = {
+        ...data,
+        credentials: providerCredentials,
+      };
+      await createProvider.mutateAsync(providerData);
       toast({ title: "Success", description: "Ad provider created successfully" });
       providerForm.reset();
+      setSelectedProviderType('');
+      setProviderCredentials({});
     } catch (error) {
       toast({ title: "Error", description: "Failed to create ad provider", variant: "destructive" });
     }
@@ -207,32 +225,16 @@ export default function AdminDashboard() {
                             <FormItem>
                               <FormLabel>Provider Type</FormLabel>
                               <FormControl>
-                                <Select onValueChange={field.onChange} value={field.value}>
+                                <Select onValueChange={(value) => { field.onChange(value); handleProviderTypeChange(value); }} value={field.value}>
                                   <SelectTrigger>
                                     <SelectValue placeholder="Select provider type" />
                                   </SelectTrigger>
                                   <SelectContent>
-                                    <SelectItem value="adsense">Google AdSense</SelectItem>
-                                    <SelectItem value="medianet">Media.net</SelectItem>
-                                    <SelectItem value="amazon">Amazon Associates</SelectItem>
-                                    <SelectItem value="propellerads">PropellerAds</SelectItem>
-                                    <SelectItem value="bidvertiser">BidVertiser</SelectItem>
-                                    <SelectItem value="chitika">Chitika</SelectItem>
-                                    <SelectItem value="infolinks">InfoLinks</SelectItem>
-                                    <SelectItem value="yllix">Yllix</SelectItem>
-                                    <SelectItem value="exoclick">ExoClick</SelectItem>
-                                    <SelectItem value="adnow">AdNow</SelectItem>
-                                    <SelectItem value="revenuehits">RevenueHits</SelectItem>
-                                    <SelectItem value="popads">PopAds</SelectItem>
-                                    <SelectItem value="adsterra">Adsterra</SelectItem>
-                                    <SelectItem value="trafficstars">TrafficStars</SelectItem>
-                                    <SelectItem value="ero-advertising">Ero-Advertising</SelectItem>
-                                    <SelectItem value="plugrush">PlugRush</SelectItem>
-                                    <SelectItem value="juicyads">JuicyAds</SelectItem>
-                                    <SelectItem value="clickadilla">ClickAdilla</SelectItem>
-                                    <SelectItem value="hilltopads">HilltopAds</SelectItem>
-                                    <SelectItem value="adcash">AdCash</SelectItem>
-                                    <SelectItem value="custom">Custom HTML</SelectItem>
+                                    {Object.values(adProviderConfigs).map((config) => (
+                                      <SelectItem key={config.id} value={config.id}>
+                                        {config.name} ({config.category})
+                                      </SelectItem>
+                                    ))}
                                   </SelectContent>
                                 </Select>
                               </FormControl>
@@ -241,26 +243,86 @@ export default function AdminDashboard() {
                           )}
                         />
                       </div>
-                      <FormField
-                        control={providerForm.control}
-                        name="credentials"
-                        render={({ field }) => (
-                          <FormItem>
-                            <FormLabel>Credentials (JSON)</FormLabel>
-                            <FormControl>
-                              <Textarea 
-                                placeholder='{"publisherId": "pub-123456", "adClientId": "ca-pub-123456"}'
-                                {...field} 
-                                value={field.value || ''}
-                              />
-                            </FormControl>
-                            <FormDescription>
-                              Enter provider credentials as JSON (will be encrypted)
-                            </FormDescription>
-                            <FormMessage />
-                          </FormItem>
-                        )}
-                      />
+                      
+                      {/* Dynamic Provider Information Panel */}
+                      {selectedProviderType && (
+                        <div className="mt-6 p-4 bg-blue-50 dark:bg-blue-900/20 rounded-lg border border-blue-200 dark:border-blue-800">
+                          <h4 className="font-semibold text-blue-900 dark:text-blue-100 mb-2">
+                            {adProviderConfigs[selectedProviderType]?.name} Configuration
+                          </h4>
+                          <p className="text-sm text-blue-700 dark:text-blue-300 mb-4">
+                            {adProviderConfigs[selectedProviderType]?.description}
+                          </p>
+                          <div className="grid grid-cols-2 gap-4 text-sm">
+                            <div>
+                              <strong>Category:</strong> {adProviderConfigs[selectedProviderType]?.category}
+                            </div>
+                            <div>
+                              <strong>Approval Time:</strong> {adProviderConfigs[selectedProviderType]?.requirements.approvalTime}
+                            </div>
+                            <div>
+                              <strong>Min Payout:</strong> {adProviderConfigs[selectedProviderType]?.requirements.minPayout}
+                            </div>
+                            <div>
+                              <strong>Payment Methods:</strong> {adProviderConfigs[selectedProviderType]?.requirements.paymentMethods.join(', ')}
+                            </div>
+                          </div>
+                          <div className="mt-3">
+                            <strong>Ad Formats:</strong> {adProviderConfigs[selectedProviderType]?.adFormats.join(', ')}
+                          </div>
+                          <div className="mt-3">
+                            <strong>Integration Notes:</strong> {adProviderConfigs[selectedProviderType]?.integrationNotes}
+                          </div>
+                        </div>
+                      )}
+
+                      {/* Dynamic Credential Fields */}
+                      {selectedProviderType && adProviderConfigs[selectedProviderType] && (
+                        <div className="space-y-4 mt-6">
+                          <div className="border-t pt-4">
+                            <h4 className="font-medium mb-4">Provider Credentials</h4>
+                            {Object.entries(adProviderConfigs[selectedProviderType].credentials).map(([key, config]) => (
+                              <div key={key} className="mb-4">
+                                <label className="block text-sm font-medium mb-2">
+                                  {config.label} {config.required && <span className="text-red-500">*</span>}
+                                </label>
+                                {config.type === 'textarea' ? (
+                                  <Textarea
+                                    placeholder={config.placeholder}
+                                    value={providerCredentials[key] || ''}
+                                    onChange={(e) => setProviderCredentials(prev => ({ ...prev, [key]: e.target.value }))}
+                                    rows={3}
+                                  />
+                                ) : config.type === 'select' ? (
+                                  <Select 
+                                    value={providerCredentials[key] || ''}
+                                    onValueChange={(value) => setProviderCredentials(prev => ({ ...prev, [key]: value }))}
+                                  >
+                                    <SelectTrigger>
+                                      <SelectValue placeholder={config.placeholder} />
+                                    </SelectTrigger>
+                                    <SelectContent>
+                                      {config.options?.map((option) => (
+                                        <SelectItem key={option.value} value={option.value}>
+                                          {option.label}
+                                        </SelectItem>
+                                      ))}
+                                    </SelectContent>
+                                  </Select>
+                                ) : (
+                                  <Input
+                                    type={config.type === 'number' ? 'number' : 'text'}
+                                    placeholder={config.placeholder}
+                                    value={providerCredentials[key] || ''}
+                                    onChange={(e) => setProviderCredentials(prev => ({ ...prev, [key]: e.target.value }))}
+                                  />
+                                )}
+                                <p className="text-sm text-muted-foreground mt-1">{config.description}</p>
+                              </div>
+                            ))}
+                          </div>
+                        </div>
+                      )}
                       <Button type="submit" disabled={createProvider.isPending}>
                         {createProvider.isPending ? 'Creating...' : 'Create Provider'}
                       </Button>

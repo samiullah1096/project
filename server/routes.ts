@@ -127,11 +127,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
   // Ad management routes
   app.get("/api/admin/ad-slots", async (req, res) => {
     try {
-      const userRole = req.headers['user-role'] as string;
-      if (userRole !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const adSlots = await storage.getAdSlots();
       res.json(adSlots);
     } catch (error) {
@@ -142,11 +137,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.post("/api/admin/ad-slots", async (req, res) => {
     try {
-      const userRole = req.headers['user-role'] as string;
-      if (userRole !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const adSlot = insertAdSlotSchema.parse(req.body);
       const savedAdSlot = await storage.createAdSlot(adSlot);
       res.json(savedAdSlot);
@@ -158,11 +148,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.patch("/api/admin/ad-slots/:id", async (req, res) => {
     try {
-      const userRole = req.headers['user-role'] as string;
-      if (userRole !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const { id } = req.params;
       const updates = req.body;
       
@@ -180,11 +165,6 @@ export async function registerRoutes(app: Express): Promise<Server> {
 
   app.delete("/api/admin/ad-slots/:id", async (req, res) => {
     try {
-      const userRole = req.headers['user-role'] as string;
-      if (userRole !== 'admin') {
-        return res.status(403).json({ message: "Admin access required" });
-      }
-
       const { id } = req.params;
       const deleted = await storage.deleteAdSlot(id);
       

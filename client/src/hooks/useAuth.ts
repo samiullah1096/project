@@ -60,12 +60,20 @@ export function useAuth() {
       // Store user in localStorage
       localStorage.setItem('auth_user', JSON.stringify(user));
       
-      setAuthState({
+      // Immediate state update
+      const newState = {
         user,
         isLoading: false,
         isAuthenticated: true,
         isAdmin: user.role === 'admin',
-      });
+      };
+      
+      setAuthState(newState);
+      
+      // Force re-render after state update
+      setTimeout(() => {
+        setAuthState({ ...newState });
+      }, 50);
 
       return user;
     } catch (error) {
