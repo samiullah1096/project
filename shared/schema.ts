@@ -51,7 +51,7 @@ export const analytics = pgTable("analytics", {
 export const adProviders = pgTable("ad_providers", {
   id: varchar("id").primaryKey().default(sql`gen_random_uuid()`),
   name: text("name").notNull().unique(), // 'Google AdSense', 'Media.net', etc.
-  type: text("type").notNull(), // 'adsense', 'medianet', 'custom'
+  type: text("type").notNull(), // Provider type: adsense, medianet, amazon, propellerads, etc.
   isActive: boolean("is_active").notNull().default(true),
   credentials: text("credentials"), // Encrypted JSON with API keys, publisher ID, etc.
   settings: jsonb("settings"), // Provider-specific settings
