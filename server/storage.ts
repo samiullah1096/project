@@ -20,6 +20,7 @@ export interface IStorage {
   getUserById(id: string): Promise<User | undefined>;
   updateUser(id: string, updates: Partial<User>): Promise<User | undefined>;
   deleteUser(id: string): Promise<boolean>;
+  authenticateUser(email: string, password: string): Promise<User | null>;
 
   // Tool usage tracking
   createToolUsage(usage: InsertToolUsage): Promise<ToolUsage>;
@@ -32,6 +33,7 @@ export interface IStorage {
   createAdSlot(slot: InsertAdSlot): Promise<AdSlot>;
   updateAdSlot(id: string, updates: Partial<AdSlot>): Promise<AdSlot | undefined>;
   deleteAdSlot(id: string): Promise<boolean>;
+  getActiveAdSlots(page?: string): Promise<AdSlot[]>;
 
   // Analytics
   createAnalytics(analytics: InsertAnalytics): Promise<Analytics>;
@@ -51,6 +53,7 @@ export interface IStorage {
   createAdCampaign(campaign: InsertAdCampaign): Promise<AdCampaign>;
   updateAdCampaign(id: string, updates: Partial<AdCampaign>): Promise<AdCampaign | undefined>;
   deleteAdCampaign(id: string): Promise<boolean>;
+  getCampaignsByProvider(providerId: string): Promise<AdCampaign[]>;
 
   // Ad slot assignments
   getSlotAssignments(): Promise<AdSlotAssignment[]>;
@@ -125,6 +128,20 @@ export class SupabaseStorage implements IStorage {
     return result.count > 0;
   }
 
+  async authenticateUser(email: string, password: string): Promise<User | null> {
+    const user = await this.getUserByEmail(email);
+    if (!user) {
+      return null;
+    }
+
+    const isValidPassword = await bcrypt.compare(password, user.password);
+    if (!isValidPassword) {
+      return null;
+    }
+
+    return user;
+  }
+
   // Tool usage tracking methods
   async createToolUsage(usage: InsertToolUsage): Promise<ToolUsage> {
     const [newUsage] = await this.db.insert(toolUsage).values(usage).returning();
@@ -186,6 +203,15 @@ export class SupabaseStorage implements IStorage {
   async deleteAdSlot(id: string): Promise<boolean> {
     const result = await this.db.delete(adSlots).where(eq(adSlots.id, id));
     return result.count > 0;
+  }
+
+  async getActiveAdSlots(page?: string): Promise<AdSlot[]> {
+    if (page) {
+      return this.db.select().from(adSlots)
+        .where(and(eq(adSlots.isActive, true), eq(adSlots.page, page)))
+        .orderBy(adSlots.createdAt);
+    }
+    return this.db.select().from(adSlots).where(eq(adSlots.isActive, true)).orderBy(adSlots.createdAt);
   }
 
   // Analytics methods
@@ -264,6 +290,10 @@ export class SupabaseStorage implements IStorage {
   async deleteAdCampaign(id: string): Promise<boolean> {
     const result = await this.db.delete(adCampaigns).where(eq(adCampaigns.id, id));
     return result.count > 0;
+  }
+
+  async getCampaignsByProvider(providerId: string): Promise<AdCampaign[]> {
+    return this.db.select().from(adCampaigns).where(eq(adCampaigns.providerId, providerId)).orderBy(adCampaigns.createdAt);
   }
 
   // Ad slot assignments methods
