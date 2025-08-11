@@ -60,20 +60,21 @@ export function useAuth() {
       // Store user in localStorage
       localStorage.setItem('auth_user', JSON.stringify(user));
       
-      // Immediate state update
-      const newState = {
+      // Immediate state update with forced re-render
+      setAuthState({
         user,
         isLoading: false,
         isAuthenticated: true,
         isAdmin: user.role === 'admin',
-      };
+      });
       
-      setAuthState(newState);
-      
-      // Force re-render after state update
-      setTimeout(() => {
-        setAuthState({ ...newState });
-      }, 50);
+      // Trigger location change for admin redirect
+      if (user.role === 'admin') {
+        // Use a small delay to ensure state update completes
+        setTimeout(() => {
+          window.location.href = '/admin';
+        }, 100);
+      }
 
       return user;
     } catch (error) {
@@ -132,6 +133,11 @@ export function useAuth() {
         isAuthenticated: false,
         isAdmin: false,
       });
+      
+      // Redirect to home after logout
+      setTimeout(() => {
+        window.location.href = '/';
+      }, 100);
     }
   };
 
@@ -150,7 +156,7 @@ export function useAuth() {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to update profile');
+        throw new Error('Profile update failed');
       }
 
       const { user } = await response.json();
@@ -158,6 +164,7 @@ export function useAuth() {
       // Update localStorage
       localStorage.setItem('auth_user', JSON.stringify(user));
       
+      // Update state
       setAuthState(prev => ({
         ...prev,
         user,
@@ -171,10 +178,7 @@ export function useAuth() {
   };
 
   return {
-    user: authState.user,
-    isLoading: authState.isLoading,
-    isAuthenticated: authState.isAuthenticated,
-    isAdmin: authState.isAdmin,
+    ...authState,
     login,
     register,
     logout,

@@ -1,6 +1,7 @@
 import type { Express } from "express";
 import { createServer, type Server } from "http";
 import { storage } from "./storage";
+import { adsRouter } from "./routes/ads";
 import { z } from "zod";
 import { 
   insertUserSchema, 
@@ -482,6 +483,9 @@ Sitemap: ${req.protocol}://${req.get('host')}/api/seo/sitemap.xml`;
       res.status(500).json({ message: "Failed to fetch daily ad stats" });
     }
   });
+
+  // Register ads router
+  app.use('/api/ads', adsRouter);
 
   const httpServer = createServer(app);
   return httpServer;

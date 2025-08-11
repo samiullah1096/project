@@ -2,6 +2,7 @@ import { drizzle } from "drizzle-orm/postgres-js";
 import { eq, desc, and, gte, lte, sql } from "drizzle-orm";
 import postgres from "postgres";
 import bcrypt from "bcrypt";
+import * as schema from "@shared/schema";
 import { 
   users, toolUsage, adSlots, analytics, adProviders, adCampaigns, 
   adSlotAssignments, adAnalytics, adViews,
@@ -34,6 +35,24 @@ export interface IStorage {
   updateAdSlot(id: string, updates: Partial<AdSlot>): Promise<AdSlot | undefined>;
   deleteAdSlot(id: string): Promise<boolean>;
   getActiveAdSlots(page?: string): Promise<AdSlot[]>;
+
+  // Ad providers management
+  getAdProviders(): Promise<AdProvider[]>;
+  createAdProvider(provider: InsertAdProvider): Promise<AdProvider>;
+  updateAdProvider(id: string, updates: Partial<AdProvider>): Promise<AdProvider | undefined>;
+  deleteAdProvider(id: string): Promise<boolean>;
+
+  // Ad campaigns management
+  getAdCampaigns(): Promise<AdCampaign[]>;
+  createAdCampaign(campaign: InsertAdCampaign): Promise<AdCampaign>;
+  updateAdCampaign(id: string, updates: Partial<AdCampaign>): Promise<AdCampaign | undefined>;
+  deleteAdCampaign(id: string): Promise<boolean>;
+
+  // Ad slot assignments
+  getSlotAssignments(): Promise<AdSlotAssignment[]>;
+  getAssignmentsBySlot(slotId: string): Promise<AdSlotAssignment[]>;
+  createSlotAssignment(assignment: InsertAdSlotAssignment): Promise<AdSlotAssignment>;
+  assignCampaignToSlot(assignment: InsertAdSlotAssignment): Promise<AdSlotAssignment>;
 
   // Analytics
   createAnalytics(analytics: InsertAnalytics): Promise<Analytics>;
@@ -93,13 +112,13 @@ export class SupabaseStorage implements IStorage {
   constructor() {
     const connectionString = process.env.DATABASE_URL;
     if (!connectionString) {
-      throw new Error("DATABASE_URL is required for Supabase connection");
+      throw new Error("DATABASE_URL is required for database connection");
     }
     
     const client = postgres(connectionString);
-    this.db = drizzle(client);
+    this.db = drizzle(client, { schema });
     
-    console.log("Supabase storage initialized successfully!");
+    console.log("PostgreSQL database storage initialized successfully!");
   }
 
   // User management methods
