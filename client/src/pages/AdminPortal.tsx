@@ -31,7 +31,7 @@ const adProviderSchema = z.object({
   name: z.string().min(1, 'Provider name is required'),
   type: z.enum(['adsense', 'medianet', 'amazon', 'propellerads', 'bidvertiser', 'chitika', 'infolinks', 'yllix', 'exoclick', 'adnow', 'revenuehits', 'popads', 'adsterra', 'trafficstars', 'ero-advertising', 'plugrush', 'juicyads', 'clickadilla', 'hilltopads', 'adcash', 'custom']),
   isActive: z.boolean().default(true),
-  credentials: z.string().optional(),
+  credentials: z.string().optional().default(''),
   settings: z.any().optional(),
 });
 
@@ -40,9 +40,9 @@ const adCampaignSchema = z.object({
   providerId: z.string().min(1, 'Provider is required'),
   adType: z.enum(['banner', 'video', 'native', 'popup']),
   adCode: z.string().min(1, 'Ad code is required'),
-  dimensions: z.string().optional(),
+  dimensions: z.string().optional().default(''),
   isActive: z.boolean().default(true),
-  clickUrl: z.string().url().optional().or(z.literal('')),
+  clickUrl: z.string().url().optional().or(z.literal('')).default(''),
   cpmRate: z.number().optional(),
 });
 
