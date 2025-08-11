@@ -83,66 +83,40 @@ export interface IStorage {
   generateSitemap(): Promise<string>;
 }
 
-export class SupabaseStorage implements IStorage {
-  private db: ReturnType<typeof drizzle>;
+export class MemStorage implements IStorage {
+  private users: User[] = [];
+  private toolUsages: ToolUsage[] = [];
+  private adSlots: AdSlot[] = [];
+  private analytics: Analytics[] = [];
+  private adProviders: AdProvider[] = [];
+  private adCampaigns: AdCampaign[] = [];
+  private adSlotAssignments: AdSlotAssignment[] = [];
+  private adAnalytics: AdAnalytics[] = [];
+  private adViews: AdView[] = [];
 
   constructor() {
-    const connectionString = process.env.DATABASE_URL;
-    if (!connectionString) {
-      throw new Error("DATABASE_URL is required for Supabase connection");
-    }
+    // Initialize with some default data
+    this.initializeDefaultData();
+  }
+
+  private initializeDefaultData() {
+    // Initialize default ad slots
+    this.initializeDefaultAdSlots();
     
-    const client = postgres(connectionString);
-    this.db = drizzle(client);
+    // Initialize default ad providers
+    this.initializeDefaultAdProviders();
     
-    // Initialize sample data
-    this.initializeSupabaseData();
+    // Initialize sample ad campaigns
+    this.initializeSampleAdCampaigns();
+    
+    console.log("Memory storage initialized successfully!");
   }
 
-  private async initializeSupabaseData() {
-    try {
-      // Initialize admin user
-      await this.initializeAdminUser();
-      
-      // Initialize ad slots and providers  
-      await this.initializeDefaultAdSlots();
-      await this.initializeDefaultAdProviders();
-      
-      // Initialize sample ad campaigns with delay
-      setTimeout(() => {
-        this.initializeSampleAdCampaigns();
-      }, 2000);
-      
-      console.log("Supabase ad management system initialized successfully!");
-    } catch (error) {
-      console.error("Error initializing Supabase data:", error);
-    }
+  private generateId(): string {
+    return Math.random().toString(36).substr(2, 9);
   }
 
-  private async initializeAdminUser() {
-    try {
-      // Check if admin user already exists
-      const existingAdmin = await this.db.select().from(users).where(eq(users.email, "admin@toolsuitepro.com")).limit(1);
-      
-      if (existingAdmin.length === 0) {
-        const hashedPassword = await bcrypt.hash("admin123", 10);
-        
-        await this.db.insert(users).values({
-          username: "admin",
-          email: "admin@toolsuitepro.com", 
-          password: hashedPassword,
-          role: "admin"
-        });
-        
-        console.log("Admin user created successfully");
-      }
-    } catch (error) {
-      console.error("Error creating admin user:", error);
-    }
-  }
-
-  private async initializeDefaultAdSlots() {
-    try {
+  private initializeDefaultAdSlots() {
       // Check if slots already exist
       const existingSlots = await this.db.select().from(adSlots).limit(1);
       if (existingSlots.length > 0) return;
@@ -1066,4 +1040,4 @@ ${pages.map(page => `  <url>
   }
 }
 
-export const storage = new SupabaseStorage();
+export const storage = new MemStorage();
