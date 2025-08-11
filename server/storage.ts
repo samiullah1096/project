@@ -132,17 +132,21 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getToolUsage(toolName?: string, userId?: string): Promise<ToolUsage[]> {
-    let query = this.db.select().from(toolUsage);
-    
     if (toolName && userId) {
-      query = query.where(and(eq(toolUsage.toolName, toolName), eq(toolUsage.userId!, userId)));
+      return await this.db.select().from(toolUsage)
+        .where(and(eq(toolUsage.toolName, toolName), eq(toolUsage.userId!, userId)))
+        .orderBy(desc(toolUsage.timestamp));
     } else if (toolName) {
-      query = query.where(eq(toolUsage.toolName, toolName));
+      return await this.db.select().from(toolUsage)
+        .where(eq(toolUsage.toolName, toolName))
+        .orderBy(desc(toolUsage.timestamp));
     } else if (userId) {
-      query = query.where(eq(toolUsage.userId!, userId));
+      return await this.db.select().from(toolUsage)
+        .where(eq(toolUsage.userId!, userId))
+        .orderBy(desc(toolUsage.timestamp));
     }
     
-    return await query.orderBy(desc(toolUsage.timestamp));
+    return await this.db.select().from(toolUsage).orderBy(desc(toolUsage.timestamp));
   }
 
   async getToolStats(): Promise<{ toolName: string; usageCount: number; category: string }[]> {
@@ -191,17 +195,21 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getAnalytics(toolName?: string, category?: string): Promise<Analytics[]> {
-    let query = this.db.select().from(analytics);
-    
     if (toolName && category) {
-      query = query.where(and(eq(analytics.toolName, toolName), eq(analytics.category, category)));
+      return await this.db.select().from(analytics)
+        .where(and(eq(analytics.toolName, toolName), eq(analytics.category, category)))
+        .orderBy(desc(analytics.date));
     } else if (toolName) {
-      query = query.where(eq(analytics.toolName, toolName));
+      return await this.db.select().from(analytics)
+        .where(eq(analytics.toolName, toolName))
+        .orderBy(desc(analytics.date));
     } else if (category) {
-      query = query.where(eq(analytics.category, category));
+      return await this.db.select().from(analytics)
+        .where(eq(analytics.category, category))
+        .orderBy(desc(analytics.date));
     }
     
-    return await query.orderBy(desc(analytics.date));
+    return await this.db.select().from(analytics).orderBy(desc(analytics.date));
   }
 
   async getDailyAnalytics(date: string): Promise<Analytics[]> {
@@ -289,21 +297,23 @@ export class SupabaseStorage implements IStorage {
   }
 
   async getAdAnalytics(filters?: { slotId?: string; campaignId?: string; dateFrom?: string; dateTo?: string }): Promise<AdAnalytics[]> {
-    let query = this.db.select().from(adAnalytics);
+    if (!filters) {
+      return await this.db.select().from(adAnalytics).orderBy(desc(adAnalytics.date));
+    }
+
+    const conditions = [];
+    if (filters.slotId) conditions.push(eq(adAnalytics.slotId, filters.slotId));
+    if (filters.campaignId) conditions.push(eq(adAnalytics.campaignId!, filters.campaignId));
+    if (filters.dateFrom) conditions.push(gte(adAnalytics.date, filters.dateFrom));
+    if (filters.dateTo) conditions.push(lte(adAnalytics.date, filters.dateTo));
     
-    if (filters) {
-      const conditions = [];
-      if (filters.slotId) conditions.push(eq(adAnalytics.slotId, filters.slotId));
-      if (filters.campaignId) conditions.push(eq(adAnalytics.campaignId!, filters.campaignId));
-      if (filters.dateFrom) conditions.push(gte(adAnalytics.date, filters.dateFrom));
-      if (filters.dateTo) conditions.push(lte(adAnalytics.date, filters.dateTo));
-      
-      if (conditions.length > 0) {
-        query = query.where(and(...conditions));
-      }
+    if (conditions.length === 0) {
+      return await this.db.select().from(adAnalytics).orderBy(desc(adAnalytics.date));
     }
     
-    return await query.orderBy(desc(adAnalytics.date));
+    return await this.db.select().from(adAnalytics)
+      .where(and(...conditions))
+      .orderBy(desc(adAnalytics.date));
   }
 
   async getDailyAdStats(date: string): Promise<AdAnalytics[]> {
