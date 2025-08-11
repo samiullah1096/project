@@ -1,5 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useQuery } from '@tanstack/react-query';
+import { adQueries } from '@/lib/supabase';
 import { AdNetworkIntegrator } from '@/lib/adNetworkIntegrations';
 
 interface AdSlotProps {
@@ -8,53 +9,29 @@ interface AdSlotProps {
   className?: string;
 }
 
-interface AdSlotData {
-  slot: {
-    id: string;
-    name: string;
-    position: string;
-    page: string;
-    isActive: boolean;
-    dimensions?: string;
-  };
-  campaign?: {
-    id: string;
-    name: string;
-    providerId: string;
-    adType: string;
-    adCode: string;
-    dimensions: string;
-    isActive: boolean;
-    cpmRate: number;
-  };
-}
-
 export default function AdSlot({ slotId, fallbackContent, className = '' }: AdSlotProps) {
   const [isRendered, setIsRendered] = useState(false);
 
-  // Fetch ad slot data with active campaign
-  const { data: slotData, isLoading, error } = useQuery<AdSlotData>({
-    queryKey: ['/api/ads/slot', slotId],
+  // Fetch ad slot data with active campaign from Supabase
+  const { data: slotData, isLoading, error } = useQuery({
+    queryKey: ['ad-slot', slotId],
+    queryFn: async () => {
+      const { data, error } = await adQueries.getSlotWithActiveCampaign(slotId);
+      if (error) throw error;
+      return data;
+    },
     refetchInterval: 5 * 60 * 1000, // Refresh every 5 minutes
     staleTime: 2 * 60 * 1000, // Consider data stale after 2 minutes
   });
 
   useEffect(() => {
-    if (slotData?.campaign && slotData.campaign.isActive) {
-      // Track ad view
-      fetch('/api/ads/track/view', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({
-          slotId: slotData.slot.id,
-          campaignId: slotData.campaign.id,
-          timestamp: new Date().toISOString(),
-          userAgent: navigator.userAgent,
-          referrer: document.referrer,
-          ipAddress: '', // Will be filled by server
-        }),
+    if (slotData?.campaign && slotData.campaign.is_active) {
+      // Track ad view in Supabase
+      adQueries.recordAdView({
+        slotId: slotData.slot.id,
+        campaignId: slotData.campaign.id,
+        userAgent: navigator.userAgent,
+        referrer: document.referrer,
       }).catch(err => {
         console.warn('Failed to track ad view:', err);
       });
@@ -73,7 +50,7 @@ export default function AdSlot({ slotId, fallbackContent, className = '' }: AdSl
     return fallbackContent || null;
   }
 
-  if (!slotData?.campaign || !slotData.campaign.isActive) {
+  if (!slotData?.campaign || !slotData.campaign.is_active) {
     return fallbackContent || null;
   }
 
@@ -82,7 +59,7 @@ export default function AdSlot({ slotId, fallbackContent, className = '' }: AdSl
   // Parse ad code from campaign
   let adCode;
   try {
-    adCode = JSON.parse(campaign.adCode);
+    adCode = JSON.parse(campaign.ad_code);
   } catch (e) {
     console.warn('Failed to parse ad code for campaign:', campaign.id);
     return fallbackContent || null;

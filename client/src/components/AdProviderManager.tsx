@@ -12,7 +12,7 @@ import { Dialog, DialogContent, DialogHeader, DialogTitle, DialogTrigger } from 
 import { Tabs, TabsContent, TabsList, TabsTrigger } from '@/components/ui/tabs';
 import { Alert, AlertDescription } from '@/components/ui/alert';
 import { PlusCircle, Settings, TrendingUp, DollarSign, Eye, Clock } from 'lucide-react';
-import { apiRequest } from '@/lib/queryClient';
+import { adQueries } from '@/lib/supabase';
 import { getAllProviderConfigs } from '@/lib/adProviderConfigs';
 import { AdNetworkIntegrator } from '@/lib/adNetworkIntegrations';
 
@@ -56,44 +56,66 @@ export default function AdProviderManager() {
   const [showAddCampaign, setShowAddCampaign] = useState(false);
   const queryClient = useQueryClient();
 
-  // Fetch ad providers
+  // Fetch ad providers from Supabase
   const { data: providers = [], isLoading: providersLoading } = useQuery({
-    queryKey: ['/api/admin/ad-providers'],
+    queryKey: ['ad-providers'],
+    queryFn: async () => {
+      const { data, error } = await adQueries.getAdProviders();
+      if (error) throw error;
+      return data || [];
+    },
   });
 
-  // Fetch ad campaigns
+  // Fetch ad campaigns from Supabase
   const { data: campaigns = [], isLoading: campaignsLoading } = useQuery({
-    queryKey: ['/api/admin/ad-campaigns'],
+    queryKey: ['ad-campaigns'],
+    queryFn: async () => {
+      const { data, error } = await adQueries.getAdCampaigns();
+      if (error) throw error;
+      return data || [];
+    },
   });
 
-  // Fetch ad slots
+  // Fetch ad slots from Supabase
   const { data: slots = [], isLoading: slotsLoading } = useQuery({
-    queryKey: ['/api/admin/ad-slots'],
+    queryKey: ['ad-slots'],
+    queryFn: async () => {
+      const { data, error } = await adQueries.getActiveAdSlots();
+      if (error) throw error;
+      return data || [];
+    },
   });
 
-  // Fetch analytics
+  // Fetch analytics from Supabase
   const { data: analytics = [] } = useQuery({
-    queryKey: ['/api/admin/ad-analytics'],
+    queryKey: ['ad-analytics'],
+    queryFn: async () => {
+      const { data, error } = await adQueries.getAnalytics();
+      if (error) throw error;
+      return data || [];
+    },
   });
 
   const addProviderMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/admin/ad-providers', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    mutationFn: async (data: any) => {
+      const { data: result, error } = await adQueries.createAdProvider(data);
+      if (error) throw error;
+      return result;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/ad-providers'] });
+      queryClient.invalidateQueries({ queryKey: ['ad-providers'] });
       setShowAddProvider(false);
     },
   });
 
   const addCampaignMutation = useMutation({
-    mutationFn: (data: any) => apiRequest('/api/admin/ad-campaigns', {
-      method: 'POST',
-      body: JSON.stringify(data),
-    }),
+    mutationFn: async (data: any) => {
+      const { data: result, error } = await adQueries.createAdCampaign(data);
+      if (error) throw error;
+      return result;
+    },
     onSuccess: () => {
-      queryClient.invalidateQueries({ queryKey: ['/api/admin/ad-campaigns'] });
+      queryClient.invalidateQueries({ queryKey: ['ad-campaigns'] });
       setShowAddCampaign(false);
     },
   });

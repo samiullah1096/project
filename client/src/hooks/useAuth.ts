@@ -1,5 +1,6 @@
 import { useState, useEffect } from 'react';
-import { User } from '@shared/schema';
+import { supabase, signIn, signUp, signOut, getCurrentUser } from '@/lib/supabase';
+import type { User } from '@supabase/supabase-js';
 
 interface AuthState {
   user: User | null;
@@ -17,164 +18,123 @@ export function useAuth() {
   });
 
   useEffect(() => {
-    // Check if user is logged in from localStorage
-    const checkAuth = () => {
-      try {
-        const storedUser = localStorage.getItem('auth_user');
-        if (storedUser) {
-          const user = JSON.parse(storedUser);
-          setAuthState({
-            user,
-            isLoading: false,
-            isAuthenticated: true,
-            isAdmin: user.role === 'admin',
-          });
-        } else {
-          setAuthState(prev => ({ ...prev, isLoading: false }));
-        }
-      } catch (error) {
-        console.error('Auth check error:', error);
-        setAuthState(prev => ({ ...prev, isLoading: false }));
+    // Get initial session
+    const getInitialSession = async () => {
+      const { user } = await getCurrentUser();
+      
+      if (user) {
+        // Check user role from user metadata or profile
+        const isAdmin = user.user_metadata?.role === 'admin' || user.email === 'admin@toolsuitepro.com';
+        setAuthState({
+          user,
+          isLoading: false,
+          isAuthenticated: true,
+          isAdmin,
+        });
+      } else {
+        setAuthState({
+          user: null,
+          isLoading: false,
+          isAuthenticated: false,
+          isAdmin: false,
+        });
       }
     };
 
-    checkAuth();
+    getInitialSession();
+
+    // Listen for auth state changes
+    const { data: { subscription } } = supabase.auth.onAuthStateChange(
+      async (event, session) => {
+        if (session?.user) {
+          const isAdmin = session.user.user_metadata?.role === 'admin' || 
+                          session.user.email === 'admin@toolsuitepro.com';
+          setAuthState({
+            user: session.user,
+            isLoading: false,
+            isAuthenticated: true,
+            isAdmin,
+          });
+          
+          // Auto-redirect admin users
+          if (isAdmin && window.location.pathname !== '/admin') {
+            setTimeout(() => {
+              window.location.href = '/admin';
+            }, 100);
+          }
+        } else {
+          setAuthState({
+            user: null,
+            isLoading: false,
+            isAuthenticated: false,
+            isAdmin: false,
+          });
+        }
+      }
+    );
+
+    return () => subscription.unsubscribe();
   }, []);
 
   const login = async (email: string, password: string): Promise<User> => {
-    try {
-      const response = await fetch('/api/auth/login', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ email, password }),
-      });
-
-      if (!response.ok) {
-        throw new Error('Invalid credentials');
-      }
-
-      const { user } = await response.json();
-      
-      // Store user in localStorage
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      
-      // Immediate state update with forced re-render
-      setAuthState({
-        user,
-        isLoading: false,
-        isAuthenticated: true,
-        isAdmin: user.role === 'admin',
-      });
-      
-      // Trigger location change for admin redirect
-      if (user.role === 'admin') {
-        // Use a small delay to ensure state update completes
-        setTimeout(() => {
-          window.location.href = '/admin';
-        }, 100);
-      }
-
-      return user;
-    } catch (error) {
-      console.error('Login error:', error);
-      throw error;
+    const { data, error } = await signIn(email, password);
+    
+    if (error) {
+      throw new Error(error.message);
     }
+    
+    if (!data.user) {
+      throw new Error('Login failed');
+    }
+
+    return data.user;
   };
 
   const register = async (username: string, email: string, password: string): Promise<User> => {
-    try {
-      const response = await fetch('/api/auth/register', {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify({ username, email, password }),
-      });
-
-      if (!response.ok) {
-        const error = await response.json();
-        throw new Error(error.message || 'Registration failed');
-      }
-
-      const { user } = await response.json();
-      
-      // Store user in localStorage
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      
-      setAuthState({
-        user,
-        isLoading: false,
-        isAuthenticated: true,
-        isAdmin: user.role === 'admin',
-      });
-
-      return user;
-    } catch (error) {
-      console.error('Registration error:', error);
-      throw error;
+    const { data, error } = await signUp(email, password, { username });
+    
+    if (error) {
+      throw new Error(error.message);
     }
+    
+    if (!data.user) {
+      throw new Error('Registration failed');
+    }
+
+    return data.user;
   };
 
   const logout = async () => {
-    try {
-      await fetch('/api/auth/logout', {
-        method: 'POST',
-      });
-    } catch (error) {
+    const { error } = await signOut();
+    
+    if (error) {
       console.error('Logout error:', error);
-    } finally {
-      // Clear localStorage and update state
-      localStorage.removeItem('auth_user');
-      setAuthState({
-        user: null,
-        isLoading: false,
-        isAuthenticated: false,
-        isAdmin: false,
-      });
-      
-      // Redirect to home after logout
-      setTimeout(() => {
-        window.location.href = '/';
-      }, 100);
     }
+    
+    // Redirect to home after logout
+    setTimeout(() => {
+      window.location.href = '/';
+    }, 100);
   };
 
-  const updateProfile = async (updates: Partial<User>): Promise<User> => {
+  const updateProfile = async (updates: any): Promise<User> => {
     if (!authState.user) {
       throw new Error('No authenticated user');
     }
 
-    try {
-      const response = await fetch('/api/auth/profile', {
-        method: 'PATCH',
-        headers: {
-          'Content-Type': 'application/json',
-        },
-        body: JSON.stringify(updates),
-      });
+    const { data, error } = await supabase.auth.updateUser({
+      data: updates,
+    });
 
-      if (!response.ok) {
-        throw new Error('Profile update failed');
-      }
-
-      const { user } = await response.json();
-      
-      // Update localStorage
-      localStorage.setItem('auth_user', JSON.stringify(user));
-      
-      // Update state
-      setAuthState(prev => ({
-        ...prev,
-        user,
-      }));
-
-      return user;
-    } catch (error) {
-      console.error('Profile update error:', error);
-      throw error;
+    if (error) {
+      throw new Error(error.message);
     }
+
+    if (!data.user) {
+      throw new Error('Profile update failed');
+    }
+
+    return data.user;
   };
 
   return {
